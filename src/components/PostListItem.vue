@@ -16,29 +16,30 @@
     </div>
 
     <div class="post-date text-faded">
-      <AppDate :timestamp="post.publishedAt" />
+      <AppDate :timestamp="post.publishedAt"/>
     </div>
   </div>
 </template>
 
 <script>
-  import sourceData from '@/data'
-  export default {
-    props: {
-      post: {
-        required: true,
-        type: Object
-      }
+import { countObjectProperties } from '@/utils'
+
+export default {
+  props: {
+    post: {
+      required: true,
+      type: Object
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.state.users[this.post.userId]
     },
-    computed: {
-      user () {
-        return sourceData.users[this.post.userId]
-      },
-      userPostsCount () {
-        return Object.keys(this.user.posts).length
-      }
+    userPostsCount () {
+      return countObjectProperties(this.user.posts)
     }
   }
+}
 </script>
 
 <style scoped>
