@@ -1,8 +1,17 @@
 <template>
   <div class="col-large push-top">
-    <h1>{{ thread.title }}</h1>
+    <h1>{{ thread.title }}
+      <router-link
+        :to="{name: 'ThreadEdit', id: this.id}"
+        class="btn-green btn-small"
+        tag="button"
+      >
+        EditThread
+      </router-link>
+
+    </h1>
     <p>
-      By <a href="#" class="link-unstyled">Robin</a>,
+      By <a href="#" class="link-unstyled">{{ creator.name }}</a>,
       <AppDate :timestamp="thread.publishedAt"/>
       .
       <span style="float:right; margin-top: 2px;"
@@ -33,6 +42,9 @@ export default {
   },
 
   computed: {
+    creator () {
+      return this.$store.state.users[this.$store.state.threads[this.id].userId]
+    },
     thread () {
       return this.$store.state.threads[this.id]
     },
