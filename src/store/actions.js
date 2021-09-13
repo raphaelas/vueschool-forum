@@ -1,4 +1,12 @@
-import { child, getDatabase, onValue, ref, push, update } from 'firebase/database'
+import { child, getDatabase, onValue, ref, push, update, set } from 'firebase/database'
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth'
 
 export default {
   createPost ({ commit, state }, post) {
@@ -72,6 +80,62 @@ export default {
     })
   },
 
+  createUser ({ state, commit }, { id, email, name, username, avatar = null }) {
+    return new Promise((resolve, reject) => {
+      const registeredAt = Math.floor(Date.now() / 1000)
+      const usernameLower = username.toLowerCase()
+      email = email.toLowerCase()
+      const user = { avatar, email, name, username, usernameLower, registeredAt }
+      console.log(`id: ${id}`)
+      set(child(ref(getDatabase(), 'users'), id), user)
+        .then(() => {
+          commit('setItem', { resource: 'users', id: id, item: user })
+          resolve(state.users[id])
+        })
+    })
+  },
+
+  registerUserWithEmailAndPasssword ({ dispatch }, { email, name, username, password, avatar = null }) {
+    return createUserWithEmailAndPassword(getAuth(), email, password)
+      .then(userCredential => {
+        return dispatch('createUser', { id: userCredential.user.uid, email, name, username, password, avatar })
+      })
+      .then(() => dispatch('fetchAuthUser'))
+  },
+
+  signInWithEmailAndPassword (context, { email, password }) {
+    return signInWithEmailAndPassword(getAuth(), email, password)
+  },
+
+  signInWithGoogle ({ dispatch }) {
+    const auth = getAuth()
+    const provider = new GoogleAuthProvider(auth)
+    signInWithPopup(auth, provider)
+      .then(data => {
+        const user = data.user
+        onValue(child(ref(getDatabase(), 'users'), user.uid), snapshot => {
+          if (!snapshot.exists()) {
+            return dispatch('createUser', {
+              id: user.uid,
+              name: user.displayName,
+              email: user.email,
+              username: user.email,
+              avatar: user.photoURL
+            })
+              .then(() => dispatch('fetchAuthUser'))
+          }
+        },
+        { onlyOnce: true })
+      })
+  },
+
+  signOut ({ commit }) {
+    return signOut(getAuth())
+      .then(() => {
+        commit('setAuthId', null)
+      })
+  },
+
   updateThread ({ state, commit, dispatch }, { title, text, id }) {
     return new Promise((resolve, reject) => {
       const thread = state.threads[id]
@@ -97,6 +161,26 @@ export default {
 
   updateUser ({ commit }, user) {
     commit('setUser', { userId: user['.key'], user })
+  },
+
+  fetchAuthUser ({ dispatch, commit }) {
+    const userId = getAuth().currentUser.uid
+    return new Promise((resolve, reject) => {
+      // check if user exists in the database
+      onValue(child(ref(getDatabase(), 'users'), userId), snapshot => {
+        if (snapshot.exists()) {
+          return dispatch('fetchUser', { id: userId })
+            .then(user => {
+              commit('setAuthId', userId)
+              resolve(user)
+            })
+        } else {
+          resolve(null)
+        }
+      }, {
+        onlyOnce: true
+      })
+    })
   },
 
   fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, emoji: '🏷' }),
