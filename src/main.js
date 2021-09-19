@@ -6,8 +6,6 @@ import App from './App'
 import router from './router'
 import store from '@/store'
 import AppDate from '@/components/AppDate'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-// import { getDatabase } from 'firebase/firebase-database'
 
 // Import the functions you need from the SDKs you need
 
@@ -28,12 +26,6 @@ const firebaseConfig = {
 }
 // Initialize Firebase
 initializeApp(firebaseConfig)
-
-onAuthStateChanged(getAuth(), user => {
-  if (user) {
-    store.dispatch('fetchAuthUser')
-  }
-})
 
 /* eslint-disable no-new */
 new Vue({

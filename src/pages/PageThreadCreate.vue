@@ -4,6 +4,7 @@
     <h1>Create new thread in <i>{{ forum.name }}</i></h1>
 
     <ThreadEditor
+      ref="editor"
       @save="save"
       @cancel="cancel"
     />
@@ -31,32 +32,56 @@ export default {
     }
   },
 
+  data () {
+    return {
+      saved: false
+    }
+  },
+
   computed: {
     forum () {
       return this.$store.state.forums[this.forumId]
+    },
+
+    hasUnsavedChanges () {
+      return (this.$refs.editor.form.title || this.$refs.editor.form.text) && !this.saved
     }
   },
 
   methods: {
     ...mapActions(['createThread', 'fetchForum']),
-    save ({title, text}) {
+    save ({ title, text }) {
       this.createThread({
         forumId: this.forum['.key'],
         title,
         text
       }).then(thread => {
-        this.$router.push({name: 'ThreadShow', params: {id: thread['.key']}})
+        this.saved = true
+        this.$router.push({ name: 'ThreadShow', params: { id: thread['.key'] } })
       })
     },
 
     cancel () {
-      this.$router.push({name: 'Forum', params: {id: this.forum['.key']}})
+      this.$router.push({ name: 'Forum', params: { id: this.forum['.key'] } })
     }
   },
 
   created () {
-    this.fetchForum({id: this.forumId})
+    this.fetchForum({ id: this.forumId })
       .then(() => { this.asyncDataStatus_fetched() })
+  },
+
+  beforeRouteLeave (to, from, next) {
+    if (this.hasUnsavedChanges) {
+      const confirmed = window.confirm('Are you sure you want to leave? Unsaved changes will be lost.')
+      if (confirmed) {
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
   }
 }
 </script>
