@@ -7,29 +7,59 @@
 
         <div class="form-group">
           <label for="name">Full Name</label>
-          <input v-model="form.name" id="name" type="text" class="form-input"
-                 style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+          <input v-model="form.name"
+                 @blur="$v.form.name.$touch()"
+                 id="name" type="text" class="form-input">
+          <template v-if="$v.form.name.$error">
+            <span v-if="!$v.form.name.required" class="form-error">This field is required</span>
+          </template>
         </div>
 
         <div class="form-group">
           <label for="username">Username</label>
-          <input v-model="form.username" id="username" type="text" class="form-input">
+          <input v-model.lazy="form.username"
+                 @blur="$v.form.username.$touch()"
+                 id="username" type="text" class="form-input">
+          <template v-if="$v.form.username.$error">
+            <span v-if="!$v.form.username.required" class="form-error">This field is required</span>
+            <span v-if="!$v.form.username.unique" class="form-error">Sorry! This username is taken</span>
+          </template>
         </div>
 
         <div class="form-group">
           <label for="email">Email</label>
-          <input v-model="form.email" id="email" type="email" class="form-input">
+          <input v-model.lazy="form.email"
+                 @blur="$v.form.email.$touch()"
+                 id="email" type="email" class="form-input">
+          <template v-if="$v.form.email.$error">
+            <span v-if="!$v.form.email.required" class="form-error">This field is required</span>
+            <span v-else-if="!$v.form.email.email" class="form-error">This is not a valid email address</span>
+            <span v-else-if="!$v.form.email.unique" class="form-error">Sorry! This email is taken</span>
+          </template>
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input v-model="form.password" id="password" type="password" class="form-input"
-                 style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIUlEQVQ4EX2TOYhTURSG87IMihDsjGghBhFBmHFDHLWwSqcikk4RRKJgk0KL7C8bMpWpZtIqNkEUl1ZCgs0wOo0SxiLMDApWlgOPrH7/5b2QkYwX7jvn/uc//zl3edZ4PPbNGvF4fC4ajR5VrNvt/mo0Gr1ZPOtfgWw2e9Lv9+chX7cs64CS4Oxg3o9GI7tUKv0Q5o1dAiTfCgQCLwnOkfQOu+oSLyJ2A783HA7vIPLGxX0TgVwud4HKn0nc7Pf7N6vV6oZHkkX8FPG3uMfgXC0Wi2vCg/poUKGGcagQI3k7k8mcp5slcGswGDwpl8tfwGJg3xB6Dvey8vz6oH4C3iXcFYjbwiDeo1KafafkC3NjK7iL5ESFGQEUF7Sg+ifZdDp9GnMF/KGmfBdT2HCwZ7TwtrBPC7rQaav6Iv48rqZwg+F+p8hOMBj0IbxfMdMBrW5pAVGV/ztINByENkU0t5BIJEKRSOQ3Aj+Z57iFs1R5NK3EQS6HQqF1zmQdzpFWq3W42WwOTAf1er1PF2USFlC+qxMvFAr3HcexWX+QX6lUvsKpkTyPSEXJkw6MQ4S38Ljdbi8rmM/nY+CvgNcQqdH6U/xrYK9t244jZv6ByUOSiDdIfgBZ12U6dHEHu9TpdIr8F0OP692CtzaW/a6y3y0Wx5kbFHvGuXzkgf0xhKnPzA4UTyaTB8Ph8AvcHi3fnsrZ7Wore02YViqVOrRXXPhfqP8j6MYlawoAAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+          <input v-model="form.password"
+                 @blur="$v.form.password.$touch()"
+                 id="password" type="password" class="form-input">
+          <template v-if="$v.form.password.$error">
+            <span v-if="!$v.form.password.required" class="form-error">This field is required</span>
+            <span v-if="!$v.form.password.minLength"
+                  class="form-error">The password must be at least 6 characters long</span>
+          </template>
         </div>
 
         <div class="form-group">
           <label for="avatar">Avatar</label>
-          <input v-model="form.avatar" id="avatar" type="text" class="form-input">
+          <input v-model.lazy="form.avatar"
+                 @blur="$v.form.avatar.$touch()"
+                 id="avatar" type="text" class="form-input">
+          <template v-if="$v.form.avatar.$error">
+            <span v-if="!$v.form.avatar.url" class="form-error">The supplied URL is invalid</span>
+            <span v-else-if="!$v.form.avatar.supportedImageFile" class="form-error">This file type is not supported by our system. Supported file types: .jpg, .png, .gif, .jpeg, .svg</span>
+            <span v-else-if="!$v.form.avatar.responseOk" class="form-error">The supplied image cannot be found</span>
+          </template>
         </div>
 
         <div class="form-actions">
@@ -38,13 +68,18 @@
 
       </form>
       <div class="text-center push-top">
-        <button @click="registerWithGoogle" class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign up with Google</button>
+        <button @click="registerWithGoogle" class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign up with
+          Google
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { required, email, minLength, url } from 'vuelidate/lib/validators'
+import { responseOk, supportedImageFile, uniqueEmail, uniqueUsername } from '@/utils/validators'
+
 export default {
   data () {
     return {
@@ -58,8 +93,38 @@ export default {
     }
   },
 
+  validations: {
+    form: {
+      name: {
+        required
+      },
+      username: {
+        required,
+        unique: uniqueUsername
+      },
+      email: {
+        required,
+        email,
+        unique: uniqueEmail
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      avatar: {
+        url,
+        supportedImageFile,
+        responseOk
+      }
+    }
+  },
+
   methods: {
     register () {
+      this.$v.form.$touch()
+      if (this.$v.form.$invalid) {
+        return
+      }
       this.$store.dispatch('auth/registerUserWithEmailAndPasssword', this.form)
         .then(() => this.successRedirect())
     },
@@ -70,7 +135,7 @@ export default {
     },
 
     successRedirect () {
-      const redirectTo = this.$route.query.redirectTo || {name: 'Home'}
+      const redirectTo = this.$route.query.redirectTo || { name: 'Home' }
       this.$router.push(redirectTo)
     }
   },

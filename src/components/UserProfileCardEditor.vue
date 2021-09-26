@@ -7,11 +7,22 @@
       </p>
 
       <div class="form-group">
-        <input v-model="activeUser.username" type="text" placeholder="Username" class="form-input text-lead text-bold" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;" autocomplete="off">
+        <input v-model.lazy="activeUser.username"
+               @blur="$v.activeUser.username.$touch()"
+               type="text" placeholder="Username" class="form-input text-lead text-bold" autocomplete="off">
+        <template v-if="$v.activeUser.username.$error">
+          <span v-if="!$v.activeUser.username.required" class="form-error">This field is required</span>
+          <span v-if="!$v.activeUser.username.unique" class="form-error">Sorry! This username is taken</span>
+        </template>
       </div>
 
       <div class="form-group">
-        <input v-model="activeUser.name" type="text" placeholder="Full Name" class="form-input text-lead">
+        <input v-model="activeUser.name"
+               @blur="$v.activeUser.name.$touch()"
+               type="text" placeholder="Full Name" class="form-input text-lead">
+        <template v-if="$v.activeUser.name.$error">
+          <span v-if="!$v.activeUser.name.required" class="form-error">This field is required</span>
+        </template>
       </div>
 
       <div class="form-group">
@@ -28,17 +39,28 @@
 
       <div class="form-group">
         <label class="form-label" for="user_website">Website</label>
-        <input v-model="activeUser.website" autocomplete="off" class="form-input" id="user_website" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+        <input v-model="activeUser.website"
+               @blur="$v.activeUser.website.$touch()"
+               autocomplete="off" class="form-input" id="user_website">
+        <template v-if="$v.activeUser.website.$error">
+          <span v-if="!$v.activeUser.website.url" class="form-error">The supplied URL is invalid</span>
+        </template>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="user_email">Email</label>
-        <input v-model="activeUser.email" autocomplete="off" class="form-input" id="user_email" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+        <input v-model.lazy="activeUser.email"
+               @blur="$v.activeUser.email.$touch()"
+               autocomplete="off" class="form-input" id="user_email">
+        <template v-if="$v.activeUser.email.$error">
+          <span v-if="!$v.activeUser.email.required" class="form-error">This field is required</span>
+          <span v-if="!$v.activeUser.email.unique" class="form-error">Sorry! This email is taken</span>
+        </template>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="user_location">Location</label>
-        <input v-model="activeUser.location" autocomplete="off" class="form-input" id="user_location" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAPhJREFUOBHlU70KgzAQPlMhEvoQTg6OPoOjT+JWOnRqkUKHgqWP4OQbOPokTk6OTkVULNSLVc62oJmbIdzd95NcuGjX2/3YVI/Ts+t0WLE2ut5xsQ0O+90F6UxFjAI8qNcEGONia08e6MNONYwCS7EQAizLmtGUDEzTBNd1fxsYhjEBnHPQNG3KKTYV34F8ec/zwHEciOMYyrIE3/ehKAqIoggo9inGXKmFXwbyBkmSQJqmUNe15IRhCG3byphitm1/eUzDM4qR0TTNjEixGdAnSi3keS5vSk2UDKqqgizLqB4YzvassiKhGtZ/jDMtLOnHz7TE+yf8BaDZXA509yeBAAAAAElFTkSuQmCC&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+        <input v-model="activeUser.location" autocomplete="off" class="form-input" id="user_location">
       </div>
 
       <div class="btn-group space-between">
@@ -52,6 +74,9 @@
 </template>
 
 <script>
+import { required, email, url } from 'vuelidate/lib/validators'
+import { uniqueEmail, uniqueUsername } from '@/utils/validators'
+
 export default {
   props: {
     user: {
@@ -62,6 +87,39 @@ export default {
   data () {
     return {
       activeUser: { ...this.user }
+    }
+  },
+
+  validations: {
+    activeUser: {
+      username: {
+        required,
+        unique (value) {
+          if (value.toLowerCase() === this.user.usernameLower) {
+            return true
+          }
+          return uniqueUsername(value)
+        }
+      },
+
+      name: {
+        required
+      },
+
+      website: {
+        url
+      },
+
+      email: {
+        required,
+        email,
+        unique (value) {
+          if (value.toLowerCase() === this.user.email) {
+            return true
+          }
+          return uniqueEmail(value)
+        }
+      }
     }
   },
 
@@ -77,8 +135,11 @@ export default {
 
   methods: {
     save () {
-      this.$store.dispatch('users/updateUser', { ...this.activeUser })
-      this.$router.push({name: 'Profile'})
+      this.$v.activeUser.$touch()
+      if (!this.$v.activeUser.$invalid) {
+        this.$store.dispatch('users/updateUser', { ...this.activeUser })
+        this.$router.push({ name: 'Profile' })
+      }
     },
 
     cancel () {
